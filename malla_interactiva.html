@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Malla Interactiva - Gestión Empresas Hoteleras</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    .semestre {
+      display: inline-block;
+      vertical-align: top;
+      margin: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      background-color: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .semestre h3 {
+      text-align: center;
+    }
+    .ramo {
+      width: 220px;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      color: #333;
+      background-color: #cce5f7;
+      transition: all 0.3s;
+    }
+    .ramo.aprobado {
+      background-color: #f5e8d3;
+      text-decoration: line-through;
+    }
+    .ramo.bloqueado {
+      background-color: #ddd;
+      cursor: not-allowed;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Malla Interactiva - Mención Gestión de Empresas Hoteleras</h1>
+  <div id="contenedor"></div>
+
+  <script>
+    const malla = [
+      ["Administración I", "Introducción a la Hotelería", "Matemáticas", "Higiene y Manipulación de Alimentos", "Inglés Inicial"],
+      ["Administración II", "Turismo", "Estadística Aplicada", "Química de los Alimentos", "Inglés II"],
+      ["Marketing en Hotelería y Hospitalidad", "Economía", "Gestión de Alojamientos", "Nutrición", "Inglés III"],
+      ["Gestión de Eventos", "Gestión y Recepción", "Inglés IV", "Portugués I", "Taller de Integración Primer Ciclo"],
+      ["Gestión de Empresas Hoteleras", "Planificación y Organización de Eventos", "Gestión de Calidad en Hotelería", "Inglés V", "Portugués II", "Taller de Integración UV I", "Pre-clínica Intermedia"],
+      ["Servicio al Cliente", "Gestión de Calidad", "Módulo de Investigación", "Taller de Integración UV II"],
+      ["Clínica de Servicios de Hotel", "Marketing de Servicios Hoteleros", "Simulación de Proyectos Hoteleros", "Trabajo en Equipo", "Práctica Profesional", "Seminario de Tesis"]
+    ];
+
+    const requisitos = {
+      "Administración II": ["Administración I"],
+      "Estadística Aplicada": ["Matemáticas"],
+      "Química de los Alimentos": ["Higiene y Manipulación de Alimentos"],
+      "Marketing en Hotelería y Hospitalidad": ["Administración II"],
+      "Gestión de Alojamientos": ["Turismo"],
+      "Gestión de Eventos": ["Marketing en Hotelería y Hospitalidad"],
+      "Gestión y Recepción": ["Gestión de Alojamientos"],
+      "Gestión de Empresas Hoteleras": ["Gestión y Recepción"],
+      "Planificación y Organización de Eventos": ["Gestión de Eventos"],
+      "Gestión de Calidad en Hotelería": ["Gestión de Alojamientos"],
+      "Servicio al Cliente": ["Gestión de Calidad en Hotelería"],
+      "Clínica de Servicios de Hotel": ["Servicio al Cliente"],
+      "Marketing de Servicios Hoteleros": ["Marketing en Hotelería y Hospitalidad"],
+      "Simulación de Proyectos Hoteleros": ["Gestión de Empresas Hoteleras"],
+      "Práctica Profesional": ["Clínica de Servicios de Hotel"],
+      "Seminario de Tesis": ["Módulo de Investigación"]
+    };
+
+    const contenedor = document.getElementById("contenedor");
+    const estado = {};
+
+    malla.forEach((semestre, i) => {
+      const columna = document.createElement("div");
+      columna.className = "semestre";
+      const titulo = document.createElement("h3");
+      titulo.textContent = `${i + 1}° Semestre`;
+      columna.appendChild(titulo);
+      semestre.forEach(ramo => {
+        const div = document.createElement("div");
+        div.className = "ramo";
+        div.textContent = ramo;
+        estado[ramo] = { div, aprobado: false };
+        columna.appendChild(div);
+      });
+      contenedor.appendChild(columna);
+    });
+
+    function actualizarBloqueos() {
+      for (const [ramo, { div }] of Object.entries(estado)) {
+        const reqs = requisitos[ramo];
+        if (reqs && !reqs.every(r => estado[r]?.aprobado)) {
+          div.classList.add("bloqueado");
+          div.onclick = () => {};
+        } else {
+          div.classList.remove("bloqueado");
+          div.onclick = () => {
+            estado[ramo].aprobado = !estado[ramo].aprobado;
+            div.classList.toggle("aprobado");
+            actualizarBloqueos();
+          };
+        }
+      }
+    }
+
+    actualizarBloqueos();
+  </script>
+
+</body>
+</html>
